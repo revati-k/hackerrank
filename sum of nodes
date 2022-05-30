@@ -1,86 +1,57 @@
 #include <stdio.h>
 #include <stdlib.h>
-
-struct btnode
+struct node
 {
-    int value;
-    struct btnode *l;
-    struct btnode *r;
-}*root = NULL, *ptr, *temp;
-
-
-int find_depth(struct btnode *);
-int modify_tree(struct btnode *);
-void printout(struct btnode *);
-struct btnode* newnode(int);
-
-void main()
+    int info;
+    struct node *left, *right;
+};
+struct node *createnode(int key)
 {
-    int d;
-
-    root  =  newnode(50);
-    root->l  =  newnode(20);
-    root->r  =  newnode(30);
-    root->l->l  =  newnode(70);
-    root->l->r  =  newnode(80);
-    root->l->r->r  =  newnode(60);
-    root->l->l->l  =  newnode(10);
-    root->l->l->r  =  newnode(40);
-    printout(root);
-    ptr = root;
-    d = find_depth(ptr);
-    printf("Depth of tree is %d\n",d);
-    printf("tree elements after modification are ----\n");
-    modify_tree(ptr);
-    printout(ptr);
+    struct node *newnode = (struct node*)malloc(sizeof(struct node));
+    newnode->info = key;
+    newnode->left = NULL;
+    newnode->right = NULL;
+    return(newnode);
 }
-
-
-struct btnode* newnode(int value)
+int sumofnodes(struct node *root)
 {
-    struct btnode* node  =  (struct btnode*)malloc(sizeof(struct btnode));
-    node->value  =  value;
-    node->l  =  NULL;
-    node->r  =  NULL;
-    return(node);
-}
-
-
-int find_depth(struct btnode* tree)
-{
-    int ldepth, rdepth;
-
-    if (tree == NULL)
-        return 0;
-    else
+    int rightsubtree, leftsubtree, sum = 0;
+    if(root != NULL)
     {
-        ldepth = find_depth(tree->l);
-        rdepth = find_depth(tree->r);
-        if (ldepth > rdepth)
-            return ldepth + 1;
-        else
-            return rdepth + 1;
+        leftsubtree = sumofnodes(root->left);
+        rightsubtree = sumofnodes(root->right);
+        sum = (root->info) + leftsubtree + rightsubtree;
+        return sum;
     }
 }
 
-
-int modify_tree(struct btnode *tree)
+int main()
 {
-    int i, original;
 
-    if (tree == NULL)
-        return 0;
-    original = tree->value;
-    tree->value = modify_tree(tree->l) + modify_tree(tree->r);
-    return tree->value + original;
-}
+    struct node *newnode = createnode(25);
+    newnode->left = createnode(27);
+    newnode->right = createnode(19);
+    newnode->left->left = createnode(17);
+    newnode->left->right = createnode(91);
+    newnode->right->left = createnode(13);
+    newnode->right->right = createnode(55);
+
+    printf("Sum of nodes in tree 1 = %d", sumofnodes(newnode));
+    printf("\n");
+
+    struct node *node = createnode(1);
+    node->right = createnode(2);
+    node->right->right = createnode(3);
+    node->right->right->right = createnode(4);
+    node->right->right->right->right = createnode(5);
+
+    printf("Sum of nodes in tree 2 = %d", sumofnodes(node));
+    printf("\n");
 
 
-void printout(struct btnode *tree)
-{
-    if (tree->l)
-        printout(tree->l);
-    printf("%d\n", tree->value);
-    if (tree->r)
-        printout(tree->r);
+    struct node *root = createnode(15);
+
+    printf("Sum of nodes in tree 3 = %d", sumofnodes(root));
+    printf("\n");
+    return 0;
 }
